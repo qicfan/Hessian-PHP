@@ -63,12 +63,6 @@ class HessianClient{
 		$this->__handleCallbacks($this->options->before, $args);
 
 		$stream = $transport->getStream($this->url, $ctx->payload, $this->options);
-		$log_path = Yii::app()->basePath . '/runtime/hessian/';
-		if(!is_dir($log_path))
-		{
-			mkdir($log_path,0777);
-		}
-		error_log(date('Ymd H:i:s', time()).'^^^'.$ctx->call->method.'^^^'.$ctx->call->arguments[0]."\n", 3, $log_path.date('Y-m-d', time()) . '_http.log');
 		$parser = $this->factory->getParser($stream, $this->options);
 		$parser->setTypeMap($this->typemap);
 		// TODO deal with headers, packets and the rest of aditional stuff

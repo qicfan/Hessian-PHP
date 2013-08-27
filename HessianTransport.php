@@ -91,12 +91,6 @@ class HessianCURLTransport implements IHessianTransport{
 				$msg .= " Server sent: ".$result;
 			throw new Exception($msg);
 		}
-		$log_path = Yii::app()->basePath . '/runtime/hessian/';
-		if(!is_dir($log_path))
-		{
-			mkdir($log_path,0777);
-		}
-		error_log(date('Ymd H:i:s', time()) . '|' . $code . '*' .$url."\n", 3, $log_path.date('Y-m-d', time()) . '_http.log');
 		$stream = new HessianStream($result);
 		return $stream;
 	}

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of the HessianPHP package.
- * (c) 2004-2010 Manuel Gómez
+ * (c) 2004-2010 Manuel Gï¿½mez
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -20,16 +20,16 @@ include_once 'HessianStream.php';
 define('HESSIAN_PHP_VERSION', '2.0');
 
 /**
- * Default implementation of an object factory 
+ * Default implementation of an object factory
  */
 class HessianObjectFactory implements IHessianObjectFactory{
 	var $options;
 	public function setOptions(HessianOptions $options){
 		$this->options = $options;
 	}
-	
+
 	public function getObject($type){
-		if(!class_exists($type)) {
+		if(!class_exists($type, false)) {
 			if(isset($this->options->strictType) && $this->options->strictType)
 				throw new Exception("Type $type cannot be found for object instantiation, check your type mappings");
 			$obj = new stdClass();
@@ -48,15 +48,15 @@ class HessianDatetimeAdapter{
 	public static function toObject($ts, $parser){
 		$date = date('c', $ts);
 		//$date = gmdate('c', $ts);
-		return new Datetime($date);	
+		return new Datetime($date);
 	}
-	
+
 	public static function writeTime($date, $writer){
 		$ts = $date->format('U');
 		$stream = $writer->writeDate($ts);
 		return new HessianStreamResult($stream);
 	}
-} 
+}
 
 /**
  * Handles que creation of components for assembling Hessian clients and servers
@@ -68,7 +68,7 @@ class HessianFactory{
 	var $protocols = array();
 	var $transports = array();
 	static $cacheRules = array();
-	
+
 	function __construct(){
 		$this->protocols = array(
 			'2'=>array($this,'loadVersion2'), '1'=>array($this,'loadVersion1')
@@ -79,7 +79,7 @@ class HessianFactory{
 			'http' => 'HessianHttpStreamTransport'
 		);
 	}
-	
+
 	/**
 	 * Returns a specialized HessianParser object based on the options object
 	 * @param HessianStream $stream input stream
@@ -98,7 +98,7 @@ class HessianFactory{
 		}
 		return $parser;
 	}
-	
+
 	/**
 	 * Returns a specialized HessianWriter object based on the options object
 	 * @param HessianStream $stream output stream
@@ -112,7 +112,7 @@ class HessianFactory{
 		$writer = call_user_func_array($callback, array('writer', $stream, $options));
 		return $writer;
 	}
-	
+
 	/**
 	 * Creates a parsing helper object (rules resolver) that uses a protocol
 	 * rule file to parse the incomin stream. It caches the rules for further
@@ -127,7 +127,7 @@ class HessianFactory{
 		self::$cacheRules[$version] = $resolver;
 		return $resolver;
 	}
-	
+
 	/**
 	 * Receives a stream and iterates over que registered protocol handlers
 	 * in order to detect which version of Hessian is it
@@ -138,17 +138,17 @@ class HessianFactory{
 		foreach($this->protocols as $version => $callback){
 			$res = call_user_func_array($callback, array('detect', $stream, $options));
 			if($res)
-				return $version;		
+				return $version;
 		}
 		throw new Exception("Cannot detect protocol version on stream");
 	}
-	
+
 	function getConfig($version){
 		if(!isset($this->protocols[$version]))
 			throw new Exception("No configuration for version $version protocol");
 		return $this->protocols[$version];
 	}
-	
+
 	function getTransport(HessianOptions $options){
 		$type = $options->transport;
 		if(is_object($type))
@@ -158,9 +158,9 @@ class HessianFactory{
 		$class = $this->transports[$type];
 		$trans = new $class();
 		$trans->testAvailable();
-		return $trans; 
+		return $trans;
 	}
-	
+
 	function loadVersion2($mode, $stream, $options){
 		if($mode == 'parser'){
 			include_once 'Hessian2/Hessian2ServiceParser.php';
@@ -186,7 +186,7 @@ class HessianFactory{
 			return Hessian2ServiceParser::detectVersion($stream);
 		}
 	}
-	
+
 	function loadVersion1($mode, $stream, $options){
 		if($mode == 'parser'){
 			include_once 'Hessian1/Hessian1ServiceParser.php';

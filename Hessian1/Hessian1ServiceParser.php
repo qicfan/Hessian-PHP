@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of the HessianPHP package.
- * (c) 2004-2010 Manuel Gómez
+ * (c) 2004-2010 Manuel Gï¿½mez
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,7 +18,7 @@ class Hessian1ServiceParser extends Hessian1Parser{
 		$head = $stream->peek(3, 0);
 		return $head == "c\x01\x00" || $head == "r\x01\x00";
 	}
-	
+
 	function parseTop(){
 		$code = $this->read();
 		$value = null;
@@ -39,12 +39,12 @@ class Hessian1ServiceParser extends Hessian1Parser{
 		}
 		return $value;
 	}
-	
+
 	function parseCall(){
 		$this->parseHeaders();
 		$code = $this->read();
 		if($code != 'm') {
-			throw new HessianParsingException('Hessian Parser, Malformed call: Expected m'); 
+			throw new HessianParsingException('Hessian Parser, Malformed call: Expected m');
 		}
 		$call = new HessianCall();
 		$call->method = $this->parseString($code, ord($code));
@@ -58,7 +58,7 @@ class Hessian1ServiceParser extends Hessian1Parser{
 		} while(!$end);
 		return $call;
 	}
-	
+
 	function parseReply(){
 		$this->parseHeaders();
 		$code = $this->read(1);
@@ -66,10 +66,13 @@ class Hessian1ServiceParser extends Hessian1Parser{
 			$value = $this->parseFault();
 		} else
 			$value = $this->parseCheck($code);
-		if($this->read(1) == 'z')
+		if($this->read(1) == 'z') {
 			return $value;
+        } else {
+            throw new Exception('parse error');
+        }
 	}
-	
+
 	function parseFault(){
 		$code = $this->read(1);
 		while($code != 'z'){
@@ -86,8 +89,8 @@ class Hessian1ServiceParser extends Hessian1Parser{
 		$code = $this->stream->peek();
 		if($code != 'H')
 			return;
-		throw new Exception('Headers currently not supported');			
+		throw new Exception('Headers currently not supported');
 		// TODO headers
 	}
-	
+
 }

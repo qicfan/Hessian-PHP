@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of the HessianPHP package.
- * (c) 2004-2010 Manuel G髆ez
+ * (c) 2004-2010 Manuel G锟絤ez
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -151,19 +151,15 @@ class Hessian1Parser{
 		while(!$end) {
 			$tempLen = unpack('n',$this->read(2));
 			$len = $tempLen[1];
-
+            $string .= $this->readUTF8Bytes($len);
 			if($code == 's' || $code == 'x') {
 				$code = $this->read(1);
 			} else
 				$end = true;
-
-			$string .= $this->readUTF8Bytes($len);
 			//$end = true;
 		}
 		if(HessianUtils::isInternalUTF8())
 			return $string;
-//		解决php传输乱码问题
-//		return utf8_decode($string);
 		return $string;
 	}
 
